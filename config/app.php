@@ -22,11 +22,24 @@ return [
     |
     | This value determines the "environment" your application is currently
     | running in. This may determine how you prefer to configure various
-    | services the application utilizes. Set this in your ".env" file.
+    | services the application utilizes. Set this in your ".env.not" file.
     |
     */
 
     'env' => env('APP_ENV', 'production'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Version
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the "version" your application is currently
+    | running in. This may determine how you prefer to configure various
+    | services the application utilizes. Set this in your ".env.not" file.
+    |
+    */
+
+    'version' => env('APP_VERSION', 'v1'),
 
     /*
     |--------------------------------------------------------------------------
@@ -52,9 +65,15 @@ return [
     |
     */
 
-    'url' => env('APP_URL', 'http://localhost'),
+    'url' => env('APP_URL', 'http://api.sjxlogistics.test'),
 
     'asset_url' => env('ASSET_URL', null),
+
+    'main_url' => env('MAIN_APP_URL', 'http://airtimeflip.com'),
+
+    'verify_url' => env('VERIFY_URL', '/verify'),
+
+    'reset_url' => env('RESET_URL', '/password/reset'),
 
     /*
     |--------------------------------------------------------------------------
@@ -67,7 +86,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Africa/Lagos',
 
     /*
     |--------------------------------------------------------------------------
