@@ -123,7 +123,7 @@ class BaxiController extends Controller
         $response = $this->baxi->verifyMeterNumber($request->all());
         $user = User::find(auth()->user()->id);
 
-        if($response['name']){
+        if($response['status'] === 'success'){
             $transaction = $user->transactions()->create([
                 'id' => $this->generateId(Transaction::query()),
                 'reference' => $this->generateAgentReference(),

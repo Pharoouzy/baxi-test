@@ -43,7 +43,9 @@ class PasswordResetRequest extends Mailable implements ShouldQueue
     {
         // $url = config('app.main_url').'/password/reset?email='.$this->data['user']['email'].'&token='.$this->data['token'];
 
-        return $this->subject(config('app.name').' Password Reset')->from(config('mail.from.address'), config('app.name'))->markdown('mail.auth.password.reset_request');
+        return $this->subject(config('app.name').' Password Reset')
+            ->from(config('mail.from.address'), config('app.name'))
+            ->markdown('mail.auth.password.reset_request');
     }
 
 }
