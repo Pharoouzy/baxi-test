@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\V1;
 
 use App\Models\User;
-use App\Helpers\AuthHelper;
 use Illuminate\Http\Request;
 use App\Helpers\EmailHelper;
 use App\Helpers\RequestHelper;
@@ -16,7 +15,7 @@ use Illuminate\Support\Facades\Hash;
  */
 class UserController extends Controller {
 
-    use RequestHelper, AuthHelper, VerificationHelper, EmailHelper;
+    use RequestHelper, VerificationHelper, EmailHelper;
 
     /**
      * @param Request $request
