@@ -29,6 +29,10 @@ class UserController extends Controller {
         return $this->response('Data retrieved successfully', $user);
     }
 
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function update(Request $request) {
 
         $user = User::find(auth()->user()->id);

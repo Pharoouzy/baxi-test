@@ -9,6 +9,7 @@
 namespace App\Helpers;
 
 use App\Mail\EmailVerificationSuccessful;
+use App\Mail\TransactionReceipt;
 use Exception;
 use App\Mail\EmailVerification;
 use App\Mail\PasswordResetRequest;
@@ -47,15 +48,23 @@ trait EmailHelper {
         }
     }
 
-    public function sendVerificationCode($user, $url, $staff = false){
+    /**
+     * @param $user
+     * @param $url
+     */
+    public function sendVerificationCode($user, $url){
         try {
-            Mail::to($user->email)->queue(new EmailVerification($user, $url, $staff));
+            Mail::to($user->email)->queue(new EmailVerification($user, $url));
         }
         catch (Exception $exception){
             abort(503, 'Unable to send email due to connection error. But everything looks good.');
         }
     }
 
+    /**
+     * @param $user
+     * @param $url
+     */
     public function sendVerificationSuccess($user, $url) {
         try {
             Mail::to($user->email)->queue(new EmailVerificationSuccessful($user, $url));
@@ -65,27 +74,18 @@ trait EmailHelper {
         }
     }
 
-    public function sendCreateTransactionRequest($admins, $data, $backoffice = false){
-        foreach ($admins as $admin) {
-            try {
-                Mail::to($admin->email)->queue(new CreateTransactionRequest($data, $admin, $backoffice));
-            } catch (Exception $exception) {
-                abort(503, 'Unable to send email due to connection error.');
-            }
-        }
-
-
-    }
-
-    public function sendCustomerCreateTransactionRequest($user, $data, $backoffice = true){
-
+    /**
+     * @param $user
+     * @param $data
+     * @param string $type
+     */
+    public function sendTransactionReceipt($user, $data, $type = 'electricity'){
         try {
-            Mail::to($user->email)->queue(new CreateTransactionRequest($data, $user, $backoffice));
+            Mail::to($user->email)->queue(new TransactionReceipt($user, $data, $type));
         } catch (Exception $exception) {
-            abort(503, 'Unable to send email due to connection error...');
+            abort(503, 'Unable to send email due to connection error.');
         }
 
     }
-
 
 }

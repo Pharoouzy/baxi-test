@@ -14,8 +14,14 @@ class User extends Authenticatable
 {
     use Notifiable, HasApiTokens;
 
+    /**
+     * @var string
+     */
     protected $primaryKey = 'id';
 
+    /**
+     * @var bool
+     */
     public $incrementing = false;
 
     /**
@@ -56,10 +62,16 @@ class User extends Authenticatable
     protected $appends = ['full_name'];
 
 
+    /**
+     * @return string
+     */
     public function getFullNameAttribute() {
         return $this->last_name . ' ' . $this->first_name . ' ' . $this->other_name;
     }
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
     public function transactions(){
         return $this->hasMany('App\Models\Transaction')->orderBy('updated_at', 'desc');
     }

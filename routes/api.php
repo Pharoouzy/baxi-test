@@ -52,21 +52,30 @@ Route::group(['namespace' => 'V1'], function () {
     });
 
     /**
-     * Users Route
+     * DSTV Subscription Routes
      */
-    Route::group(['prefix' => 'users', 'middleware' => ['auth:api', 'status']], function (){
-        Route::get('', 'UserController@all');
-        Route::get('/staff', 'UserController@staff');
-        Route::get('/customers', 'UserController@customers');
-        Route::get('/riders', 'UserController@riders');
+    Route::group(['prefix' => 'multichoice', 'middleware' => ['auth:api', 'status']], function (){
+        Route::get('providers', 'BaxiController@getProviderBouquets');
+        Route::get('addons', 'BaxiController@getBouquetAddons');
+        Route::post('subscribe', 'BaxiController@subscribe');
     });
 
     /**
-     * Transaction Routes
+     * Electricity Bill Routes
      */
-    Route::group(['prefix' => 'report', 'middleware' => ['auth:api', 'status']], function (){
-        Route::get('', 'TransactionRequestController@adminDashboard');
-        Route::get('customer', 'TransactionRequestController@customerDashboard');
+    Route::group(['prefix' => 'electricity', 'middleware' => ['auth:api', 'status']], function (){
+        Route::get('billers', 'BaxiController@getElectricityBillers');
+        Route::post('verify', 'BaxiController@verify');
+        Route::post('recharge/{reference}', 'BaxiController@rechargeElectricityBill');
+    });
+
+    /**
+     * Transactions Routes
+     */
+    Route::group(['middleware' => ['auth:api', 'status']], function (){
+        Route::get('transactions', 'TransactionController@index');
+        Route::get('transaction/{reference}', 'TransactionController@get');
+        Route::post('transaction/requery/{reference}', 'BaxiController@requeryTransaction');
     });
 
 });

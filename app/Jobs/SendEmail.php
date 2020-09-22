@@ -10,30 +10,45 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 
+/**
+ * Class SendEmail
+ * @package App\Jobs
+ */
 class SendEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
+    /**
+     * @var int
+     */
     public $tries = 5;
 
+    /**
+     * @var int
+     */
     public $timeout = 120;
 
+    /**
+     * @var
+     */
     protected $details;
 
-    public $user;
+    /**
+     * @var
+     */
+    /**
+     * @var
+     */
+    public $user, $url;
 
-    public $staff;
-
-    public $url;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($user, $url, $staff = false) {
+    public function __construct($user, $url) {
         $this->user = $user;
         $this->url = $url;
-        $this->staff = $staff;
     }
 
     /**
@@ -43,7 +58,7 @@ class SendEmail implements ShouldQueue
      */
     public function handle()
     {
-        $email = new EmailVerification($this->user, $this->url, $this->staff);
+        $email = new EmailVerification($this->user, $this->url);
         Mail::to($this->user->email)->send($email);
     }
 }

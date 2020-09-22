@@ -10,10 +10,19 @@ use App\Helpers\RequestHelper;
 use App\Helpers\VerificationHelper;
 use App\Http\Controllers\V1\Controller;
 
+/**
+ * Class VerificationController
+ * @package App\Http\Controllers\V1\Auth
+ */
 class VerificationController extends Controller
 {
     use RequestHelper, EmailHelper, VerificationHelper;
 
+    /**
+     * @param Request $request
+     * @param $email
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index(Request $request, $email){
         $validator = $this->customValidator($request, [
             'verification_code' => 'required|min:6|max:6'
@@ -52,6 +61,11 @@ class VerificationController extends Controller
         return $this->response('Invalid verification credentials.', [], 422);
     }
 
+    /**
+     * @param Request $request
+     * @param $email
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function resend(Request $request, $email){
 
         $request['email'] = $this->decrypt(urldecode($email));
