@@ -2,7 +2,7 @@
 
 #### Introduction
 This API can be used for Electricity Bill and Cable TV Subscription.
-Follow this [link](https://documenter.getpostman.com/view/5683762/SWE6bybW) to read the API documentation <br/>
+Follow this [link](https://documenter.getpostman.com/view/7306778/TVKD2xL5) to read the API documentation <br/>
 This API is also available for testing through this link [http://localhost:8080/ v1](http://localhost:8080/v1 )
 
 
