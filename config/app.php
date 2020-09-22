@@ -69,7 +69,7 @@ return [
 
     'asset_url' => env('ASSET_URL', null),
 
-    'main_url' => env('MAIN_APP_URL', 'http://airtimeflip.com'),
+    'main_url' => env('MAIN_APP_URL', 'https://airtimeflip.com'),
 
     'verify_url' => env('VERIFY_URL', '/verify'),
 

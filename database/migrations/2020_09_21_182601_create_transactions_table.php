@@ -16,6 +16,7 @@ class CreateTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->unsignedBigInteger('id')->primary();
             $table->string('reference', 20);
+            $table->string('baxi_reference')->nullable();
             $table->decimal('amount', 20, 2)->default('0.00');
             $table->unsignedBigInteger('user_id');
             $table->string('name')->nullable();
@@ -34,7 +35,7 @@ class CreateTransactionsTable extends Migration
             $table->string('amount_of_power')->nullable();
             $table->string('transaction_code')->nullable();
             $table->string('transaction_description')->nullable();
-            $table->enum('transaction_status', ['failed', 'successful', 'pending'])->default('pending');
+            $table->enum('transaction_status', ['failed', 'success', 'pending'])->default('pending');
             $table->longText('raw_output')->nullable();
             $table->longText('response_full')->nullable();
             $table->timestamps();

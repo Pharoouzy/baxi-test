@@ -79,9 +79,9 @@ trait EmailHelper {
      * @param $data
      * @param string $type
      */
-    public function sendTransactionReceipt($user, $data, $type = 'electricity'){
+    public function sendTransactionReceipt($user, $data){
         try {
-            Mail::to($user->email)->queue(new TransactionReceipt($user, $data, $type));
+            Mail::to($user->email)->queue(new TransactionReceipt($user, $data));
         } catch (Exception $exception) {
             abort(503, 'Unable to send email due to connection error.');
         }

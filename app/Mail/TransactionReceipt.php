@@ -27,13 +27,12 @@ class TransactionReceipt extends Mailable implements ShouldQueue
     /**
      * @var
      */
-    public $data, $user, $type;
+    public $data, $user;
 
 
-    public function __construct($data, $user, $type = 'electricity') {
+    public function __construct($user, $data) {
         $this->data = $data;
         $this->user = $user;
-        $user->type = $type;
     }
 
     /**

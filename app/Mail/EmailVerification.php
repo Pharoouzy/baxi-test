@@ -15,9 +15,7 @@ class EmailVerification extends Mailable implements ShouldQueue
 
     public $timeout = 120;
 
-    public $user;
-
-    public $url;
+    public $user, $url;
 
     /**
      * Create a new message instance.

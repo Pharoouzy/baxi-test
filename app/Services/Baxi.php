@@ -87,10 +87,6 @@ Class Baxi {
 
         $response = json_decode($response->getBody(), true);
 
-        if($response['status'] === 'success'){
-            $response = $response['data'];
-        }
-
         return $response;
 
     }
@@ -118,10 +114,6 @@ Class Baxi {
 
         $response = json_decode($response->getBody(), true);
 
-        if($response['status'] === 'success'){
-            $response = $response['data'];
-        }
-
         return $response;
     }
 
@@ -135,8 +127,8 @@ Class Baxi {
 
             $response = $this->http->post($this->endpoint . '/services/multichoice/request', [
                 'total_amount' => $data['amount'],
-                'addon_monthsPaidFor' => $data['addon_months_paid_for'],
-                'addon_code' => $data['addon_code'],
+                'addon_monthsPaidFor' => $data['addon_months_paid_for'] ?? null,
+                'addon_code' => $data['addon_code'] ?? null,
                 'product_monthsPaidFor' => $data['product_months_paid_for'],
                 'product_code' => $data['product_code'],
                 'smartcard_number' => $data['smartcard_number'],
@@ -150,10 +142,6 @@ Class Baxi {
         }
 
         $response = json_decode($response->getBody(), true);
-
-        if($response['status'] === 'success'){
-            $response = $response['data'];
-        }
 
         return $response;
     }

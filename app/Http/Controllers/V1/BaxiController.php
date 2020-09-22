@@ -75,9 +75,24 @@ class BaxiController extends Controller
             return $this->response('Transaction has already been handled.', [], 422);
         }
 
+        $user = User::find(auth()->user()->id);
+
         $response = $this->baxi->requeryTransaction($request->reference);
 
-        if($response['statusCode'] === '0') {
+        if(isset($response['statusCode']) && $response['statusCode'] === '0') {
+            $transaction->update([
+                'baxi_reference' => $response['baxiReference'],
+                'transaction_status' => $response['transactionStatus'],
+                'token_code' => $response['tokenCode'] ?? null,
+                'transaction_description' => $response['transactionMessage'],
+                'transaction_code' => $response['statusCode'],
+                'amount_of_power' => $response['amountOfPower'] ?? null,
+                'raw_output' => $response['rawOutput'] ?? '{}',
+                'response_full' => $response,
+            ]);
+
+            $this->sendTransactionReceipt($user, $transaction);
+
             return $this->response('Success', $response);
         }
 
@@ -111,30 +126,36 @@ class BaxiController extends Controller
 
         $validator = $this->customValidator($request, [
             'type' => 'required|string|in:prepaid,postpaid',
-            'meter_number' => 'required|string|min:11|max:16'
+            'meter_number' => 'required|string|min:11|max:12'
         ]);
 
         if ($validator->fails()) {
             return $this->validationError($validator);
         }
 
-        $request['service_type'] = ($request->type === 'postpaid') ? 'enugu_electric_postpaid' : 'enugu_electric_prepaid';
+        // $request['service_type'] = ($request->type === 'postpaid') ? 'enugu_electric_postpaid' : 'enugu_electric_prepaid';
+
+        $request['service_type'] = ($request->type === 'postpaid') ? 'eko_electric_postpaid' : 'eko_electric_prepaid';
 
         $response = $this->baxi->verifyMeterNumber($request->all());
         $user = User::find(auth()->user()->id);
-
         if($response['status'] === 'success'){
+            $response = $response['data'];
             $transaction = $user->transactions()->create([
                 'id' => $this->generateId(Transaction::query()),
                 'reference' => $this->generateAgentReference(),
                 'name' => $response['name'],
-                'service_type' => $request->type,
+                'service_type' => $request->service_type,
                 'address' => $response['address'],
                 'meter_number' => $response['accountNumber'],
                 'outstanding_balance' => $response['outstandingBalance'],
             ]);
 
-            return $this->response('verification successful', ['reference' => $transaction->reference]);
+            $data = array_merge([
+                'reference' => $transaction->reference,
+            ], $response);
+
+            return $this->response('verification successful', $data);
         }
 
         return $this->response('error', $response, 422);
@@ -169,13 +190,15 @@ class BaxiController extends Controller
         }
 
         $response = $this->baxi->rechargeElectricityBill($request->all(), $transaction);
+        $user = User::find(auth()->user()->id);
 
         if($response['status'] === 'success'){
+            $response = $response['data'];
             $transaction->update([
                 'transaction_status' => $response['transactionStatus'],
                 'token_code' => $response['tokenCode'] ?? null,
-                'token_amount' => $response['tokenAmount'] ?? '0.00',
-                'amount' => $response['tokenAmount'] ?? '0.00',
+                'token_amount' => $response['tokenAmount'] ?? $request->amount,
+                'amount' => $response['tokenAmount'] ?? $request->amount,
                 'phone_number' => $request->phone_number,
                 'transaction_description' => $response['transactionMessage'],
                 'transaction_code' => $response['statusCode'],
@@ -183,8 +206,18 @@ class BaxiController extends Controller
                 'raw_output' => $response['rawOutput'] ?? '{}',
                 'response_full' => $response,
             ]);
-
+            $this->sendTransactionReceipt($user, $transaction);
             return $this->response('recharge successful', $transaction);
+        }
+        else if($response['status'] === 'pending'){
+            $transaction->update([
+                'token_amount' => $request->amount,
+                'amount' => $response['tokenAmount'] ?? $request->amount,
+                'transaction_description' => $response['message'],
+                'response_full' => $response,
+            ]);
+            $this->sendTransactionReceipt($user, $transaction);
+            return $this->response($response['status'].' transaction', $transaction);
         }
 
         return $this->response('error', $response, 422);
@@ -220,6 +253,7 @@ class BaxiController extends Controller
         $response = $this->baxi->subscribe($request->all(), $transaction);
 
         if($response['status'] === 'success'){
+            $response = $response['data'];
             $transaction->update([
                 'transaction_status' => $response['transactionStatus'],
                 'amount' => $request->amount,
@@ -232,6 +266,8 @@ class BaxiController extends Controller
                 'product_code' => $request->product_code,
                 'response_full' => $response,
             ]);
+
+            $this->sendTransactionReceipt($user, $transaction);
 
             return $this->response($response['transactionMessage'], $transaction);
         }

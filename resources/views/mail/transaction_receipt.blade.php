@@ -5,36 +5,65 @@
 <br>
 <br>
 
-# Hi {{ $user->first_name.' '.$backoffice }},
+# Hi {{ $user->first_name }},
 
-@if($type == 'electricity')
+@if($data->type)
 
-Transaction Successful.
+@if($data->transaction_status === 'pending')
+Your payment for Eko Electricity {{ $data->type }} is pending.
+@else
+Your payment for Eko Electricity {{ $data->type }} was Successful.
+@endif
+
 
 # Transaction Information:
 | | |
 |-|-|
-| **Item Name:** | {{$data->item_name}} |
-| **Weight:** | {{$data->weight}} |
+| **Amount:** | #{{number_format($data->token_amount, 2)}} |
+| **Reference:** | {{$data->reference}} |
+| **Token:** | {{$data->token_code ?? 'N/A'}} |
+| **Meter Number:** | {{$data->meter_number}} |
 
-@component('mail::button', ['url' => config('main_url')])
-    Login to Dashboard
+@if($data->transaction_status === 'pending')
+
+@component('mail::button', ['url' => config('app.main_url').'/transactions/requery/'.$data->reference])
+Requery Transaction
 @endcomponent
 
 @else
 
-Transaction Successful.
+@component('mail::button', ['url' => config('app.main_url').'/transactions/'.$data->reference])
+View Transaction
+@endcomponent
+
+@endif
+
+@else
+
+Your payment for DSTV subscription was Successful.
 
 # Transaction Information:
 | | |
 |-|-|
-| **Item Name:** | {{$data->item_name}} |
-| **Weight:** | {{$data->weight}} |
-| **Payment Amount:** | {{$data->price}} |
+| **Amount:** | #{{number_format($data->amount, 2)}} |
+| **Reference:** | {{$data->reference}} |
+| **Month:** | {{$data->product_months_paid_for}} Months |
+| **Smartcard Number:** | {{$data->smartcard_number}} |
 
-@component('mail::button', ['url' => config('main_url')])
-    Login to Dashboard
+@if($data->transaction_status === 'pending')
+
+@component('mail::button', ['url' => config('main_url').'/transactions/requery/'.$data->reference])
+Requery Transaction
 @endcomponent
+
+@else
+
+@component('mail::button', ['url' => config('main_url').'/transactions/'.$data->reference])
+View Transaction
+@endcomponent
+
+@endif
+
 
 @endif
 Thanks,<br>
