@@ -72,6 +72,12 @@ After running your migration and seed, proceed to installing passport with the f
 $ php artisan passport:install
 ````
 
+Start the application by running the command below>
+
+````
+$ php artisan serve
+````
+
 #### Synchronizing with front-end
 
 Update the app frontend url in the ````.env```` file
